@@ -12,12 +12,12 @@ def play_music():
             print(f"Error: {music_file} not found!")
             return
             
-        pygame.mixer.pre_init(44100, -16, 2, 2048)
-        pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=2048)
+        pygame.init()
+        pygame.mixer.init()
         pygame.mixer.music.load(music_file)
         pygame.mixer.music.set_volume(1.0)
         pygame.mixer.music.play(-1)
-        print("Music started with custom audio settings!")
+        print("Music started!")
     except pygame.error as e:
         print(f"Error initializing or playing music: {e}")
     except Exception as e:
@@ -57,7 +57,6 @@ center.color("pink")
 center.shapesize(3)
 center.penup()
 
-# carousel
 base = turtle.Turtle()
 base.penup()
 base.goto(0, -200)
