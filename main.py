@@ -1,55 +1,27 @@
 import turtle
 import math
-import pygame
-import threading
-
-def play_music():
-    try:
-        import os
-        music_file = "music.wav"
-        print(f"Looking for music file at: {os.path.abspath(music_file)}")
-        if not os.path.exists(music_file):
-            print(f"Error: {music_file} not found!")
-            return
-            
-        pygame.init()
-        pygame.mixer.init()
-        pygame.mixer.music.load(music_file)
-        pygame.mixer.music.set_volume(1.0)
-        pygame.mixer.music.play(-1)
-        print("Music started!")
-    except pygame.error as e:
-        print(f"Error initializing or playing music: {e}")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-
-music_thread = threading.Thread(target=play_music)
-music_thread.start()
 
 screen = turtle.Screen()
 screen.setup(800, 800)
-screen.bgcolor("pink") #might change into custom image
+screen.bgcolor("pink") 
 screen.title("personalized carousel")
 
 screen.register_shape("small bunny.gif")
 screen.register_shape("small dolphin.gif")
 screen.register_shape("small bird.gif")
 
-# user questions
-carosuel_name = screen.textinput("carosuel name", "what do you wish to name your carosuel?")
-#change screen.title to answer
-num_animals = int(screen.numinput("animals", "how many animals do you want on the carousel? (max 10)", 4, minval=1, maxval=10))
-velocity = float(screen.numinput("velocity", "enter the carousel's rotation velocity (0.1~10:", 2, minval=0.1, maxval=10))
-#ask for whole mass of animals
+carosuel_name = screen.textinput("carousel name", "what do you wish to name your carousel?")
+screen.title(f"{carosuel_name}")
+num_animals = int(screen.numinput("animals", "how many animals do you want on the carousel? (max 10)", minval=1, maxval=10))
+mass = float(screen.numinput("total animal mass", "enter the total mass of the animals (kg, max=50):", minval=1, maxval=50))
+velocity = float(screen.numinput("velocity", "enter the carousel's velocity:", minval=0.1, maxval=10))
+acceleration = float(screen.numinput("acceleration", "enter the acceleration of the carousel (m/s^2):", minval=0.1))
+
 animal_options = ["bunny", "dolphin", "bird"]
 animals = []
 for i in range(num_animals):
     choice = screen.textinput("animal type", f"animal {i+1}: choose bunny, dolphin, or bird").lower()
-    while choice not in animal_options:
-        choice = screen.textinput("Choose Animal", f"Invalid choice! Animal {i+1}: Choose bunny, dolphin, or bird").lower()
     animals.append(choice)
-
-#calculate the acting forces 
 
 center = turtle.Turtle()
 center.shape("circle")
@@ -67,7 +39,6 @@ base.circle(200)
 base.end_fill()
 base.hideturtle()
 
-# animals
 animal_turtles = []
 for i in range(num_animals):
     animal = turtle.Turtle()
@@ -85,6 +56,15 @@ for i in range(num_animals):
         animal.shape("small bird.gif")
     animal_turtles.append(animal)
 
+force = mass * acceleration
+def display_force():
+    info_box = turtle.Turtle()
+    info_box.penup()
+    info_box.hideturtle()
+    info_box.goto(-370, 350) 
+    info_box.color("white")
+    info_box.write(f"force of carousel: {force:.2f} N", align="left", font=("Arial", 12, "normal"))
+
 def rotate():
     for animal in animal_turtles:
         x, y = animal.pos()
@@ -95,5 +75,5 @@ def rotate():
     screen.ontimer(rotate, 50)
 
 rotate()
-#add a box that has all the acting forces
+display_force()
 screen.mainloop()
